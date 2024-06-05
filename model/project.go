@@ -5,4 +5,5 @@ type Project struct {
 	UrlGithub   string
 	UrlDoc      string
 	Description string
+	Image       string
 }

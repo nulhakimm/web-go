@@ -16,5 +16,7 @@ func SetupUserRoutes(app *fiber.App) {
 	projectRepo := repository.NewProjectRepo(db)
 	projectController := controller.NewProjectController(projectRepo)
 	app.Get("/", projectController.RenderHome)
+	app.Get("/projects", projectController.RenderProject)
+	app.Post("/projects", projectController.CreateProject)
 
 }

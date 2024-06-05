@@ -14,6 +14,8 @@ func main() {
 		Views: engine,
 	})
 
+	app.Static("/", "./public")
+
 	routers.SetupUserRoutes(app)
 
 	app.Listen("localhost:2020")

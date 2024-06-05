@@ -11,6 +11,7 @@ import (
 
 type ProjectRepo interface {
 	FindAll(ctx context.Context) ([]*model.Project, error)
+	Save(ctx context.Context, project *model.Project) error
 }
 
 type ProjectRepoImpl struct {
@@ -50,5 +51,16 @@ func (repository *ProjectRepoImpl) FindAll(ctx context.Context) ([]*model.Projec
 	}
 
 	return projects, nil
+
+}
+
+func (repository *ProjectRepoImpl) Save(ctx context.Context, project *model.Project) error {
+
+	_, _, err := repository.Client.Collection("projects").Add(ctx, project)
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }

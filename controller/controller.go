@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/nulhakimm/web-go/model"
 	"github.com/nulhakimm/web-go/repository"
 )
 
@@ -16,6 +17,8 @@ import (
 
 type ProjectController interface {
 	RenderHome(ctx *fiber.Ctx) error
+	RenderProject(ctx *fiber.Ctx) error
+	CreateProject(ctx *fiber.Ctx) error
 }
 
 type ProjectControllerImpl struct {
@@ -28,13 +31,38 @@ func NewProjectController(projectRepo repository.ProjectRepo) ProjectController 
 	}
 }
 
-func (controller *ProjectControllerImpl) RenderHome(c *fiber.Ctx) error {
-	projects, err := controller.ProjectRepo.FindAll(c.Context())
+func (controller *ProjectControllerImpl) RenderHome(ctx *fiber.Ctx) error {
+	projects, err := controller.ProjectRepo.FindAll(ctx.Context())
 	if err != nil {
 		return fmt.Errorf("failed get all data : %v", err)
 	}
 
-	return c.Render("index", fiber.Map{
+	return ctx.Render("index", fiber.Map{
 		"Projects": projects,
 	})
+}
+
+func (controller *ProjectControllerImpl) RenderProject(ctx *fiber.Ctx) error {
+	return ctx.Render("project_create", nil)
+}
+
+func (controller *ProjectControllerImpl) CreateProject(ctx *fiber.Ctx) error {
+
+	project := model.Project{
+		Title:       ctx.FormValue("title"),
+		UrlGithub:   ctx.FormValue("url_github"),
+		UrlDoc:      ctx.FormValue("url_doc"),
+		Description: ctx.FormValue("description"),
+		Image:       "assets/projects1.jpg",
+	}
+
+	err := controller.ProjectRepo.Save(ctx.Context(), &project)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(fiber.Map{
+		"status": "success",
+	})
+
 }
